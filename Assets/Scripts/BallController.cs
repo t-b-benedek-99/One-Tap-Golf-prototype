@@ -21,39 +21,43 @@ public class BallController : MonoBehaviour
     }
 
     void Update()
-    {        
-        if (!hasShooted)
+    {
+        if (GameManager.Instance.CurrentGameState != GameState.OVER)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (!hasShooted)
             {
-                UIManager.Instance.TurnHintTextOff();
-                TrajectoryController.Instance.velocity.x -= 0.3f;
-            }
-
-            if (Input.GetKey(KeyCode.Space))
-            {
-                foreach (var point in TrajectoryController.Instance.points)
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    point.gameObject.SetActive(true);
+                    UIManager.Instance.TurnHintTextOff();
+                    TrajectoryController.Instance.velocity.x -= 0.3f;
                 }
-                TrajectoryController.Instance.velocity.y += 0.03f;                
-            }
 
-            if (Input.GetKeyUp(KeyCode.Space) || lastPoint.transform.position.x >= 8.2f)
-            {
-                hasShooted = true;
-                newVelocity = TrajectoryController.Instance.velocity;
-                TrajectoryController.Instance.velocity = new Vector3(newVelocity.x, 0, 0);
-                foreach (var point in TrajectoryController.Instance.points)
+                if (Input.GetKey(KeyCode.Space))
                 {
-                    point.gameObject.SetActive(false);
+                    foreach (var point in TrajectoryController.Instance.points)
+                    {
+                        point.gameObject.SetActive(true);
+                    }
+                    TrajectoryController.Instance.velocity.y += 0.03f;
                 }
-                ApplyTrajectory();                
-            }            
-        } else
-        {
-            ThrowCheckDistance();
-        }        
+
+                if (Input.GetKeyUp(KeyCode.Space) || lastPoint.transform.position.x >= 8.2f)
+                {
+                    hasShooted = true;
+                    newVelocity = TrajectoryController.Instance.velocity;
+                    TrajectoryController.Instance.velocity = new Vector3(newVelocity.x, 0, 0);
+                    foreach (var point in TrajectoryController.Instance.points)
+                    {
+                        point.gameObject.SetActive(false);
+                    }
+                    ApplyTrajectory();
+                }
+            }
+            else
+            {
+                ThrowCheckDistance();
+            }
+        }
     }
 
     void ApplyTrajectory()
